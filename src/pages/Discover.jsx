@@ -1,4 +1,8 @@
 import React from "react";
+import SearchBar from "../components/SearchBar";
+import MovieGrid from "../components/MovieGrid";
+import StatusMessage from "../components/StatusMessage";
+import { fetchInitialMovies, searchMovies } from '../services/movieApi'
 
 function Discover() {
    return (

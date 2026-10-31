@@ -1,4 +1,6 @@
 import React from "react";
+import MovieCard from "../components/MovieCard";
+import StatusMessage from "../components/StatusMessage";
 
 function Watched() {
    return (
