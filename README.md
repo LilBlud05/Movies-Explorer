@@ -1,4 +1,4 @@
-# Movies Explorer // Bauhaus Cine-Archive
+# Movies Explorer 
 
 An archival web application built with **React**, **Vite**, **React Router DOM**, and **Tailwind CSS**, integrated with **The Movie Database (TMDB)**. It allows cinephiles and curators to discover cinema, search titles across collections, save films to a personal watchlist without duplicates, and track completed viewings in a dedicated watched archive.
 
