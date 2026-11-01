@@ -1,24 +1,27 @@
-import React from 'react'
+import React from 'react';
 
-function SearchBar({
-    searchTerm,
-    onSearchChange,
-    onCLearSearch,
-    isSearching = false
+/**
+ * Labeled SearchBar component in Bauhaus Neo-Brutalist styling.
+ */
+export default function SearchBar({
+  searchTerm,
+  onSearchChange,
+  onSearchSubmit,
+  onClearSearch,
+  isSearching = false,
 }) {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSearchSubmit();
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSearchSubmit()
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      onClearSearch();
     }
+  };
 
-    const handleKeyDown = (e) => {
-        if (e.key === 'Escape') {
-            onCLearSearch()
-        }
-    }
   return (
-
     <div className="w-full max-w-3xl mx-auto my-6">
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
@@ -35,7 +38,7 @@ function SearchBar({
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="SEARCH MOVIES (E.G. INTERSTELLAR, PARASITE)..."
+              placeholder="SEARCH TMDB MOVIES (E.G. INTERSTELLAR, PARASITE)..."
               className="w-full pl-9 pr-14 py-3 bg-white focus:bg-[#faf7f2] border-2 border-[#1a1a1a] brutalist-shadow font-bold text-sm sm:text-base uppercase tracking-tight placeholder:text-[#747878] placeholder:font-normal placeholder:capitalize focus:outline-none focus:ring-0 transition-colors"
             />
             {searchTerm && (
@@ -67,8 +70,5 @@ function SearchBar({
         </button>
       </form>
     </div>
-    
-  )
+  );
 }
-
-export default SearchBar
