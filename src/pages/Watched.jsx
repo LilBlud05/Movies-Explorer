@@ -1,5 +1,5 @@
 import React from "react";
-import MovieCard from "../components/MovieCard";
+import MovieGrid from "../components/MovieGrid";
 import StatusMessage from "../components/StatusMessage";
 
 function Watched({ savedMovies, onAddToWatchlist, onMarkAsWatched, onRemove }) {
