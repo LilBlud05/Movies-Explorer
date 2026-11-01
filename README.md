@@ -1,68 +1,130 @@
-# Little Store — learning Redux Toolkit
+# Movies Explorer // Bauhaus Cine-Archive
 
-A small Vite + React app in plain JavaScript. Three products, one cart slice, and no backend. Add products, change quantities, clear the cart, and expand **Peek inside the store** to see the actual cart state.
+An archival web application built with **React**, **Vite**, **React Router DOM**, and **Tailwind CSS**, integrated with **The Movie Database (TMDB)**. It allows cinephiles and curators to discover cinema, search titles across collections, save films to a personal watchlist without duplicates, and track completed viewings in a dedicated watched archive.
 
-Next project: [Movies Explorer capstone guide](./CAPSTONE.md), with milestones, API recommendations, and deployment instructions. Redux is optional for the capstone; React state and props are sufficient.
+Styled in a **Bauhaus Neo-Brutalist** aesthetic with sharp 0px borders, bold 2px ink lines, crisp mechanical drop shadows, and constructivist primary accents.
 
-## Run locally
+---
 
-Use Node.js 22.12 or newer.
+## Features
 
-```sh
-npm install
-npm run dev
-```
+| Feature | Implementation Details |
+|---|---|
+| **Discover Movies** | Initial collections (Popular, Top Rated, Trending) fetched from TMDB (`/`) with titles, release years, vote ratings, genre tags, and 2:3 aspect ratio posters with fallback support. |
+| **Title Search** | Search films by title against TMDB with keyboard shortcuts (`ESC` clear), loading spinners, and informative empty-result feedback. |
+| **Watchlist Management** | Save any movie to personal queue (`/watchlist`) without creating duplicates. Updates real-time navigation badges. |
+| **Watched Tracking** | Mark films as watched (`/watched`) to move them out of the pending watchlist into the completed archive. |
+| **Persistence** | Saved collection automatically persists in browser `localStorage`. Survives page refreshes and browser restarts. |
+| **Client-Side Routing** | Powered by `react-router-dom` with Netlify (`_redirects`) and Vercel (`vercel.json`) SPA rewrites. |
 
-Open the local URL printed by Vite. Other commands:
+---
 
-```sh
-npm test          # Cart behavior and immutability checks
-npm run build    # Production build in dist/
-npm run preview  # Serve the production build after building
-```
+## Project Structure
 
-## Suggested teaching order
-
-1. **The store — `src/app/store.js`.** `configureStore` creates the shared state container. Registering `cart: cartReducer` gives the state its `{ cart: { items: [] } }` shape.
-2. **The provider — `src/main.jsx`.** `<Provider store={store}>` connects the React component tree to that store.
-3. **The slice — `src/features/cart/cartSlice.js`.** `createSlice` groups initial state and reducer functions, then generates action creators. A reducer describes how state changes after an action. Redux Toolkit uses Immer, so mutation-style code inside these reducers produces immutable updates. Avoid changing state directly elsewhere.
-4. **Dispatch — `src/components/ProductList.jsx`.** `useDispatch()` gives a component the dispatch function. Clicking a product button calls `dispatch(itemAdded(product))`.
-5. **Selectors — `src/components/Cart.jsx`.** `useSelector()` subscribes to selected data. Cart rows, quantities, and totals update after actions. `Header` in `src/App.jsx` reads the same count independently, demonstrating shared state without passing cart props through the tree.
-
-The data flow is:
+This project strictly adheres to the requested architecture without unnecessary additions:
 
 ```text
-Button click
-  → dispatch(itemAdded(product))
-  → cart slice reducer
-  → updated store
-  → useSelector reads the changed values
-  → React updates the cart and header
+movies-explorer/
+├── public/
+│   ├── _redirects                # Netlify SPA fallback to index.html
+│   └── poster-fallback.svg       # Custom Bauhaus fallback vector graphic
+├── src/
+│   ├── components/
+│   │   ├── Navbar.jsx            # Uses <NavLink> for /, /watchlist, and /watched
+│   │   ├── SearchBar.jsx         # Labeled search input, submit, and clear button
+│   │   ├── MovieGrid.jsx         # Responsive grid container for MovieCards
+│   │   ├── MovieCard.jsx         # Individual movie card with status action buttons
+│   │   └── StatusMessage.jsx     # UI feedback for loading, empty states, and errors
+│   ├── data/
+│   │   └── sampleMovies.js       # Curated archival movie records for testing and fallback
+│   ├── pages/
+│   │   ├── DiscoverPage.jsx      # Renders on "/"
+│   │   ├── WatchlistPage.jsx     # Renders on "/watchlist"
+│   │   └── WatchedPage.jsx       # Renders on "/watched"
+│   ├── services/
+│   │   └── movieApi.js           # Centralized fetch calls and TMDB data-shape mapping
+│   ├── utils/
+│   │   └── localStorage.js       # Helper functions for persisting saved movies
+│   ├── App.jsx                   # Holds shared state and <Routes>
+│   ├── index.css                 # Main stylesheet importing Tailwind CSS
+│   └── main.jsx                  # Wraps <App /> in <BrowserRouter>
+├── .env                          # Local API keys (ignored by Git)
+├── .env.example                  # Safe template showing required VITE_ variable names
+├── .gitignore                    # Excludes node_modules, dist, and .env files
+├── index.html                    # HTML root template with Space Grotesk fonts
+├── package.json                  # Dependencies and build scripts
+├── PLAN.md                       # Answers to the 7 pre-build research questions
+├── README.md                     # Project documentation and setup guide
+├── vercel.json                   # Vercel SPA fallback configuration
+└── vite.config.js                # Vite configuration with React and Tailwind plugins
 ```
 
-For example, `itemAdded({ id: 'notebook', name: 'Everyday notebook', price: 12 })` creates:
+---
 
-```js
-{
-  type: 'cart/itemAdded',
-  payload: { id: 'notebook', name: 'Everyday notebook', price: 12 }
-}
+## State Management
+
+- **No Redux / Redux Toolkit**: Built using standard React state (`useState`, `useEffect`) and pure props/callbacks.
+- **Single Source of Truth**: User collection (`savedMovies`) is held in `App.jsx`.
+- **Status Lifecycle**: Each saved movie has a status property (`'watchlist'` or `'watched'`).
+  - Adding to Watchlist sets `status: 'watchlist'`.
+  - Marking as Watched transitions `status: 'watched'`.
+  - Watchlist count and Watched count are dynamically derived from `savedMovies`.
+- **LocalStorage Sync**: Every modification to `savedMovies` is validated and serialized to `localStorage` via `src/utils/localStorage.js`.
+
+---
+
+## Local Setup & Development
+
+### 1. Prerequisites
+- Node.js (v18 or newer)
+- npm (v9 or newer)
+
+### 2. Installation
+```bash
+# Clone repository
+git clone https://github.com/YOUR_USERNAME/movies-explorer.git
+cd movies-explorer
+
+# Install dependencies
+npm install
 ```
 
-The reducer adds a new cart row with `quantity: 1`, or increases the quantity for an existing product. Decreasing a quantity of one removes that row. Totals and item counts are calculated with selectors rather than stored separately.
+### 3. Environment Variables (TMDB Setup)
+The application works immediately out of the box using the built-in TMDB-modeled archive catalog. To connect to live TMDB data:
+1. Register a free account at [themoviedb.org](https://www.themoviedb.org/) and generate an API key at [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api).
+2. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+3. Set your TMDB API Key:
+   ```env
+   VITE_TMDB_API_KEY=your_tmdb_api_key_here
+   ```
+   *(Or set `VITE_TMDB_ACCESS_TOKEN` if using v4 Bearer Auth)*
 
-## Try this in class
+### 4. Running the Development Server
+```bash
+npm run dev
+```
+Open your browser at the local Vite URL (typically `http://localhost:5173`).
 
-- Add the same product twice. Notice one row with quantity two, and the matching header badge.
-- Add a second product and predict the total before clicking.
-- Decrease a quantity to zero, then clear the cart.
-- Keep the state preview open while interacting.
-- If installed, open the Redux DevTools browser extension to inspect action payloads and state changes. `configureStore` enables its development integration automatically.
-- Exercise: add an `itemRemoved` reducer and a button that removes a whole row regardless of quantity.
+### 5. Production Build
+```bash
+npm run build
+npm run preview
+```
 
-This lesson deliberately leaves out routing, asynchronous requests, persistence, and checkout. Refreshing starts with an empty cart. Static products stay outside Redux because they do not change. A cart this small could use React state; Redux is used here to demonstrate its shared-state flow.
+---
 
-## Learn more
+## Deployment Configuration
 
-- [Watch this video to learn more about Redux](https://youtu.be/5yEG6GhoJBs?si=A2mRl4ZWTGgOKmut).
-- Official reference: [Redux Quick Start](https://redux.js.org/tutorials/quick-start).
+- **Netlify**: Configured with `public/_redirects` routing `/*` to `/index.html 200`.
+- **Vercel**: Configured with `vercel.json` rewrite routing `/(.*)` to `/index.html`.
+
+---
+
+## Credits & Attribution
+
+- **Data Provider**: This product uses the TMDB API but is not endorsed or certified by TMDB.
+- **Typography**: Space Grotesk and Geist Mono by Google Fonts.
+- **Design System**: Bauhaus Neo-Brutalist design principles from `Design.md`.
