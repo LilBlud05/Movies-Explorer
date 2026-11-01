@@ -107,8 +107,27 @@ function App() {
                      />
                   }
                />
+
+               {/* Fallback route */}
+               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
          </div>
+
+         {/* Archival brutalist footer */}
+         <footer className="mt-auto border-t-2 border-[#1a1a1a] bg-[#f2ede5] py-6 px-4 md:px-8">
+            <div className="max-w-[1280px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono font-bold uppercase text-[#4a4a4a]">
+               <div>
+                  <span>MOVIES EXPLORER</span>
+                  <span className="mx-2">--</span>
+                  <span>&copy; 2026 All Rights Reserved</span>
+               </div>
+               <div className="flex items-center gap-4">
+                  <span>SAVED: {savedMovies.length}</span>
+                  <span>•</span>
+                  <span>LOCAL PERSISTENCE: ACTIVE</span>
+               </div>
+            </div>
+         </footer>
       </div>
    );
 }
